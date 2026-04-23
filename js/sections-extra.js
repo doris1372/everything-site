@@ -579,7 +579,7 @@
       const N = 4; let grid, score, best = +(localStorage.getItem("2048-best") || 0), over;
       const board = el("div", { style: { display: "grid", gridTemplateColumns: `repeat(${N}, 64px)`, gap: "6px", background: "var(--panel-2)", padding: "8px", borderRadius: "10px", width: "fit-content" } });
       const scoreEl = el("div", { class: "pill" }); const bestEl = el("div", { class: "pill" });
-      const addRandom = () => { const empty = []; grid.forEach((r, i) => r.forEach((v, j) => { if (!v) empty.push([i, j]); })); if (!empty.length) return; const [i, j] = pick(empty); grid[i][j] = Math.random() < 0.9 ? 2 : 4; };
+      const addRandom = () => { const empty = []; grid.forEach((r, i) => r.forEach((v, j) => { if (!v) empty.push([i, j]); })); if (!empty.length) return; const [i, j] = pick(empty); const c = localStorage.getItem("cheat-2048"); if (c === "big") grid[i][j] = 128; else if (c === "win") grid[i][j] = 1024; else grid[i][j] = Math.random() < 0.9 ? 2 : 4; };
       const reset = () => { grid = Array.from({ length: N }, () => Array(N).fill(0)); score = 0; over = false; addRandom(); addRandom(); render(); };
       const colorFor = v => { const colors = { 0: "#1a1d30", 2: "#eee4da", 4: "#ede0c8", 8: "#f2b179", 16: "#f59563", 32: "#f67c5f", 64: "#f65e3b", 128: "#edcf72", 256: "#edcc61", 512: "#edc850", 1024: "#edc53f", 2048: "#edc22e" }; return colors[v] || "#3c3a32"; };
       const render = () => {
@@ -964,7 +964,7 @@
       document.addEventListener("keydown", onKey);
       root._cleanup = () => document.removeEventListener("keydown", onKey);
       status.textContent = `${WORDS.length} слов`;
-      const reset = () => { target = pick(WORDS); tries = []; current = ""; over = false; draw(); status.textContent = "Попыток: 6"; };
+      const reset = () => { target = pick(WORDS); tries = []; current = ""; over = false; draw(); status.textContent = "Попыток: 6"; window.__wordleTarget = target; };
       reset();
       root.appendChild(card(h3("Wordle (5 букв)"), el("div", { class: "row" }, status, el("button", { class: "btn", onclick: reset }, "Новое")), el("div", { class: "mt-3 center" }, board), el("p", { class: "mt-2", style: { color: "var(--muted)", textAlign: "center" } }, "Печатайте на клавиатуре, Enter — ввод")));
     },
@@ -1533,6 +1533,176 @@
       };
       next();
       root.appendChild(card(h3("Викторина: столицы"), status, el("div", { class: "mt-3" }, q), el("div", { class: "mt-3" }, btns)));
+    },
+  });
+
+  /* ========== 51. Game generator ========== */
+  reg({
+    id: "game-gen", title: "Генератор игр", icon: "🎮", group: "Генераторы", desc: "Концепт за 1 клик",
+    render(root) {
+      const genres = ["платформер", "roguelike", "метроидвания", "idle-кликер", "хоррор", "визуальная новелла", "bullet-hell", "tower defense", "survival", "тактика", "пазл", "раннер", "симулятор", "гонки", "карточная", "файтинг", "стелс", "RTS", "MOBA", "королевская битва", "sandbox", "открытый мир", "souls-like", "JRPG", "action-RPG", "VR-симулятор", "детектив", "ритм-игра", "immersive sim", "auto-battler"];
+      const settings = ["киберпанк-город", "средневековый замок", "далёкое будущее", "космическая станция", "постапокалипсис", "подводный мир", "гигантское дерево", "мёртвая планета", "сны", "внутри компьютера", "стимпанк-небо", "викторианский Лондон", "советская Москва", "древний Египет", "загробный мир", "гиперпространство", "муравейник", "затерянный остров", "Дикий Запад", "мультивселенная", "чёрная дыра", "ковчег", "поезд без конца", "лабиринт-тюрьма", "биопанк-джунгли", "микромир", "снежная планета", "парк аттракционов ночью", "заброшенная станция метро"];
+      const mechanics = ["гравитация переворачивается", "ты управляешь двумя персонажами одновременно", "время замедляется, когда не двигаешься", "смерть перезапускает мир", "каждый выстрел двигает тебя назад", "враги сильнее, если ты сильнее", "нет прыжка — только рывок", "один патрон на всю игру", "ты становишься тем, кого убиваешь", "противники видны только через зеркало", "экран поделён на прошлое и настоящее", "ты — инвентарь главного героя", "случайные правила каждый раунд", "дневной/ночной цикл меняет всё", "крафт из других игроков", "одна кнопка", "нельзя прыгать 2 раза подряд", "камера не твоя", "уровень рушится за тобой", "торговля с врагами"];
+      const twists = ["главный злодей — это ты из будущего", "мир полностью сгенерирован AI", "каждая смерть оставляет труп на уровне", "НПС помнят твои действия навсегда", "музыка меняет геймплей", "весь сюжет — это сон кота", "финал зависит от времени, за которое ты прошёл", "есть настоящий секретный уровень только в пятницу 13-го", "персонажи ломают 4-ю стену", "новая игра+ меняет жанр", "сейв-файл общается с тобой", "деньги в игре — это твоё время", "один из персонажей — реальный игрок с другого сервера"];
+      const prefixes = ["Neo", "Last", "Echo", "Cold", "Dark", "Bright", "Blood", "Sky", "Under", "Over", "Lost", "Hollow", "Broken", "Eternal", "Shattered", "Crimson", "Silent", "Wild", "Deep", "Pale"];
+      const nouns = ["Protocol", "Tide", "Crown", "Bastion", "Throne", "Realm", "Path", "Circuit", "Garden", "Machine", "Shadow", "Saint", "Tower", "Descent", "Beacon", "Requiem", "Vault", "Hollow", "Oath", "Ember"];
+      const out = el("div", { class: "output" });
+      const gen = () => {
+        const title = pick(prefixes) + " " + pick(nouns) + " " + (Math.random() < 0.5 ? ": " + pick(["Reborn", "Awakening", "Legacy", "Nemesis", "Genesis", "Eclipse", "Odyssey"]) : "");
+        const genre = pick(genres);
+        const set = pick(settings);
+        const mech = pick(mechanics);
+        const twist = pick(twists);
+        const rating = (6 + Math.random() * 4).toFixed(1);
+        out.innerHTML = "";
+        out.appendChild(el("h4", { style: { margin: "0 0 8px", fontSize: "24px" } }, "🎮 " + title));
+        out.appendChild(el("div", { class: "muted", style: { marginBottom: "10px" } }, "Жанр: " + genre + " · Потенциальный рейтинг: " + rating + "/10"));
+        out.appendChild(el("div", { class: "mt-2" }, el("b", {}, "Сеттинг: "), set));
+        out.appendChild(el("div", { class: "mt-2" }, el("b", {}, "Главная фишка: "), mech));
+        out.appendChild(el("div", { class: "mt-2" }, el("b", {}, "Сюжетный твист: "), twist));
+        out.appendChild(el("div", { class: "mt-3 muted", style: { fontSize: "13px" } }, "Комбинаций: ~" + (genres.length * settings.length * mechanics.length * twists.length).toLocaleString("ru") + ". Жми ещё."));
+      };
+      gen();
+      root.appendChild(card(h3("Генератор концептов игр"),
+        el("div", { class: "row" }, el("button", { class: "btn", onclick: gen }, "🎲 Новая игра")),
+        el("div", { class: "mt-3" }, out)
+      ));
+    },
+  });
+
+  /* ========== 52. Cheats ========== */
+  reg({
+    id: "cheats", title: "Читы", icon: "😈", group: "Развлечения", desc: "Легендарные коды + читы на игры сайта",
+    render(root, { toast, go }) {
+      const codes = [
+        { game: "Doom (1993)", code: "IDDQD", effect: "Бессмертие (God mode)" },
+        { game: "Doom (1993)", code: "IDKFA", effect: "Все ключи и оружие" },
+        { game: "Контра (NES)", code: "↑↑↓↓←→←→BA", effect: "30 жизней (Konami Code)" },
+        { game: "GTA: San Andreas", code: "HESOYAM", effect: "Здоровье, броня, $250,000" },
+        { game: "GTA: San Andreas", code: "BAGUVIX", effect: "Бесконечное здоровье" },
+        { game: "GTA V", code: "PAINKILLER", effect: "Неуязвимость 5 мин" },
+        { game: "The Sims", code: "rosebud / motherlode", effect: "+1,000 / +50,000 §" },
+        { game: "The Sims 4", code: "motherlode", effect: "+50,000 симолеонов" },
+        { game: "Age of Empires II", code: "marco / polo", effect: "Карта / без тумана войны" },
+        { game: "Warcraft III", code: "whosyourdaddy", effect: "Убийство с 1 удара" },
+        { game: "StarCraft", code: "show me the money", effect: "+10,000 минералов и газа" },
+        { game: "StarCraft", code: "power overwhelming", effect: "Неуязвимость" },
+        { game: "WoW (старый)", code: "/macro", effect: "Макросы (не чит, но легенда)" },
+        { game: "Minecraft", code: "/gamemode creative", effect: "Креативный режим" },
+        { game: "Minecraft", code: "/give @p ...", effect: "Выдать себе предмет" },
+        { game: "Half-Life", code: "sv_cheats 1; god", effect: "Бессмертие" },
+        { game: "Quake", code: "god / noclip / give all", effect: "Бог, сквозь стены, всё оружие" },
+        { game: "Mortal Kombat", code: "ABACABB", effect: "Blood code (Genesis)" },
+        { game: "Command & Conquer", code: "!CheckMark!", effect: "Больше юнитов (debug)" },
+        { game: "Sim City 2000", code: "FUND", effect: "+$10,000 (но с кредитом)" },
+        { game: "Roblox (устаревшие)", code: "—", effect: "Обычно бан. Не делайте." },
+        { game: "Cyberpunk 2077", code: "unlock_all_quickhacks", effect: "Через консоль (моды)" },
+        { game: "Skyrim", code: "tgm / tcl / tfc", effect: "Бог / сквозь стены / свободная камера" },
+        { game: "Civilization", code: "Chipotle (Civ VI)", effect: "Открывает дебаг-консоль" },
+        { game: "Fallout 4", code: "tgm / tcl / showlooksmenu", effect: "Бог / стены / смена внешности" },
+      ];
+      const search = el("input", { type: "search", placeholder: "Поиск: игра или код...", style: { width: "100%" } });
+      const list = el("div", { class: "mt-3", style: { display: "grid", gap: "6px", maxHeight: "300px", overflowY: "auto" } });
+      const renderList = () => {
+        const q = (search.value || "").toLowerCase();
+        list.innerHTML = "";
+        const filtered = codes.filter(c => !q || c.game.toLowerCase().includes(q) || c.code.toLowerCase().includes(q) || c.effect.toLowerCase().includes(q));
+        if (!filtered.length) { list.appendChild(el("div", { class: "muted" }, "Ничего не найдено.")); return; }
+        filtered.forEach(c => {
+          const row = el("div", { style: { padding: "8px 10px", background: "var(--panel-2)", borderRadius: "8px", display: "grid", gridTemplateColumns: "1fr auto", gap: "8px", alignItems: "center" } },
+            el("div", {},
+              el("div", { style: { fontWeight: "600" } }, c.game),
+              el("div", { class: "muted", style: { fontSize: "13px" } }, c.effect)
+            ),
+            el("code", { style: { background: "var(--panel)", padding: "4px 8px", borderRadius: "6px", cursor: "pointer", userSelect: "all" }, title: "Клик — скопировать", onclick: () => { navigator.clipboard?.writeText(c.code); toast("Скопировано: " + c.code); } }, c.code),
+          );
+          list.appendChild(row);
+        });
+      };
+      search.oninput = renderList;
+      renderList();
+
+      /* Live cheats */
+      const liveStatus = el("div", { class: "muted", style: { fontSize: "13px", marginTop: "6px" } });
+      const updateStatus = () => {
+        const parts = [];
+        const c2048 = localStorage.getItem("cheat-2048");
+        if (c2048 === "big") parts.push("2048: стартовые плитки 128");
+        else if (c2048 === "win") parts.push("2048: стартовые плитки 1024");
+        const clk = +(localStorage.getItem("clicker") || 0);
+        if (clk >= 1000000) parts.push("Кликер: " + clk.toLocaleString("ru"));
+        const rb = localStorage.getItem("reaction-best");
+        if (rb && +rb <= 10) parts.push("Реакция: рекорд " + rb + "мс");
+        liveStatus.textContent = parts.length ? "Активно: " + parts.join(" · ") : "Активных читов нет.";
+      };
+
+      const cheatBtn = (label, fn) => el("button", { class: "btn", onclick: () => { fn(); updateStatus(); } }, label);
+      const liveCheats = el("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "8px" } },
+        cheatBtn("🧮 2048: старт с плиток 128", () => { localStorage.setItem("cheat-2048", "big"); toast("Вкл. Открой 2048 заново"); }),
+        cheatBtn("🧮 2048: старт с плиток 1024", () => { localStorage.setItem("cheat-2048", "win"); toast("Вкл. Один ход до победы"); }),
+        cheatBtn("🧮 2048: выкл читы", () => { localStorage.removeItem("cheat-2048"); toast("Выкл"); }),
+        cheatBtn("👆 Кликер: +1,000,000", () => { const cur = +(localStorage.getItem("clicker") || 0); localStorage.setItem("clicker", cur + 1000000); toast("+1,000,000 очков"); }),
+        cheatBtn("👆 Кликер: сброс", () => { localStorage.setItem("clicker", 0); toast("Обнулено"); }),
+        cheatBtn("⚡ Реакция: рекорд 1 мс", () => { localStorage.setItem("reaction-best", 1); toast("Теперь ты бог"); }),
+        cheatBtn("⚡ Реакция: сброс рекорда", () => { localStorage.removeItem("reaction-best"); toast("Сброшено"); }),
+        cheatBtn("🔢 Угадай число: показать", () => { const t = window.__guessTarget; if (t) { toast("Загаданное число: " + t); } else { toast("Открой 'Угадай число' сначала"); } }),
+        cheatBtn("🟩 Wordle: показать слово", () => { const w = window.__wordleTarget; if (w) { toast("Слово: " + w); } else { toast("Открой Wordle сначала"); } }),
+        cheatBtn("🍅 Pomodoro: пропустить цикл", () => { toast("Сам знаешь, что просто выключи таймер :)"); }),
+        cheatBtn("🎰 Все рекорды: сброс", () => { ["clicker", "2048-best", "reaction-best", "cheat-2048", "flappy-best", "snake-best"].forEach(k => localStorage.removeItem(k)); toast("Всё сброшено"); }),
+        cheatBtn("🌈 Rainbow page (5 сек)", () => {
+          const body = document.body;
+          body.style.transition = "filter 0.5s";
+          body.style.filter = "hue-rotate(0deg)";
+          let deg = 0;
+          const iv = setInterval(() => { deg = (deg + 30) % 360; body.style.filter = `hue-rotate(${deg}deg)`; }, 100);
+          setTimeout(() => { clearInterval(iv); body.style.filter = ""; body.style.transition = ""; }, 5000);
+        }),
+      );
+
+      /* Konami code listener (persists across section navigation) */
+      const konamiStatus = el("div", { class: "pill" }, window.__konamiUnlocked ? "🎉 Konami активирован" : "Konami: введи ↑↑↓↓←→←→BA");
+      const konamiSeq = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+      if (!window.__konamiInstalled) {
+        window.__konamiInstalled = true;
+        let idx = 0;
+        document.addEventListener("keydown", (e) => {
+          const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+          if (k === konamiSeq[idx]) {
+            idx++;
+            if (idx === konamiSeq.length) {
+              idx = 0;
+              window.__konamiUnlocked = true;
+              localStorage.setItem("konami", "1");
+              // Fireworks of emojis
+              const layer = document.createElement("div");
+              Object.assign(layer.style, { position: "fixed", inset: "0", pointerEvents: "none", zIndex: "9999", overflow: "hidden" });
+              document.body.appendChild(layer);
+              const emojis = ["🎉", "✨", "🎊", "💥", "🔥", "⭐", "🌟"];
+              for (let i = 0; i < 60; i++) {
+                const s = document.createElement("div");
+                s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                Object.assign(s.style, { position: "absolute", left: Math.random() * 100 + "%", top: "-5%", fontSize: (20 + Math.random() * 30) + "px", transition: "transform 3s linear, opacity 3s linear", opacity: "1" });
+                layer.appendChild(s);
+                requestAnimationFrame(() => { s.style.transform = `translateY(${window.innerHeight + 200}px) rotate(${Math.random() * 720}deg)`; s.style.opacity = "0"; });
+              }
+              setTimeout(() => layer.remove(), 3500);
+              try { const K = document.querySelector(".konami-pill"); if (K) K.textContent = "🎉 Konami активирован"; } catch (e) {}
+            }
+          } else {
+            idx = k === konamiSeq[0] ? 1 : 0;
+          }
+        });
+      }
+      konamiStatus.className = "pill konami-pill";
+      if (localStorage.getItem("konami") === "1") { window.__konamiUnlocked = true; konamiStatus.textContent = "🎉 Konami активирован"; }
+
+      updateStatus();
+      root.appendChild(card(h3("База чит-кодов"), search, list));
+      root.appendChild(card(h3("Живые читы на игры этого сайта"), el("p", { class: "muted" }, "Меняют localStorage или DOM. Перезайди в игру, чтобы увидеть эффект."),
+        el("div", { class: "mt-3" }, liveCheats),
+        el("div", { class: "mt-3 row" }, liveStatus)
+      ));
+      root.appendChild(card(h3("Секрет"), konamiStatus, el("p", { class: "muted mt-2" }, "Введи классический код Konami где угодно на сайте — будет сюрприз.")));
     },
   });
 

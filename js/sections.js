@@ -931,7 +931,7 @@
       const inp = el("input", { type: "number", min: 1, max: 100 });
       const out = el("div", { class: "output big center" });
       const btn = el("button", { class: "btn" }, "Проверить");
-      const reset = () => { target = Math.floor(Math.random()*100)+1; tries = 0; out.textContent = "Введите число от 1 до 100"; inp.value = ""; };
+      const reset = () => { target = Math.floor(Math.random()*100)+1; tries = 0; out.textContent = "Введите число от 1 до 100"; inp.value = ""; window.__guessTarget = target; };
       btn.onclick = () => {
         const g = +inp.value;
         if (!g) return;
