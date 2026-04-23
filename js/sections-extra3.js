@@ -163,9 +163,10 @@
       };
       addrInp.onkeydown = (e) => { if (e.key === "Enter") goBtn.click(); };
       backBtn.onclick = () => {
-        // use history stack (previous url for this tab — simple: rewind state.history
+        // rewind the global history stack: drop current, navigate to previous
         if (state.history.length < 2) { toast("Нечего «назад»"); return; }
-        const [, prev] = state.history;
+        state.history.shift();
+        const prev = state.history[0];
         const t = activeTab(); t.url = prev; t.title = prev; loadActive();
       };
       openInNewTabBtn.onclick = () => {
