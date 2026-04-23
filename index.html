@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Everything — всё на одном сайте</title>
+<meta name="description" content="Экспериментальный сайт-песочница: игры, утилиты, генераторы, рисовалка, звуки и ещё много чего." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A8%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="brand-logo">✨</span>
+      <span class="brand-name">Everything</span>
+    </div>
+    <input type="search" id="nav-search" placeholder="Поиск раздела..." class="nav-search" />
+    <nav id="nav"></nav>
+    <div class="sidebar-footer">
+      <button id="theme-toggle" class="btn ghost" title="Переключить тему">🌓 Тема</button>
+      <a class="btn ghost" href="https://github.com/doris1372/everything-site" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </aside>
+
+  <button class="menu-btn" id="menu-btn" aria-label="Меню">☰</button>
+
+  <main class="main">
+    <header class="topbar">
+      <h1 id="page-title">Главная</h1>
+      <div class="topbar-actions">
+        <button id="random-section" class="btn" title="Случайный раздел">🎲 Случайный</button>
+      </div>
+    </header>
+    <section id="content" class="content"></section>
+    <footer class="footer">
+      <span>Сделано с ❤️ — всё работает прямо в браузере, без бэкенда.</span>
+    </footer>
+  </main>
+</div>
+
+<script src="js/sections.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
