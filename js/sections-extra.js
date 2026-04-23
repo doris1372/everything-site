@@ -1548,7 +1548,7 @@
       const nouns = ["Protocol", "Tide", "Crown", "Bastion", "Throne", "Realm", "Path", "Circuit", "Garden", "Machine", "Shadow", "Saint", "Tower", "Descent", "Beacon", "Requiem", "Vault", "Hollow", "Oath", "Ember"];
       const out = el("div", { class: "output" });
       const gen = () => {
-        const title = pick(prefixes) + " " + pick(nouns) + " " + (Math.random() < 0.5 ? ": " + pick(["Reborn", "Awakening", "Legacy", "Nemesis", "Genesis", "Eclipse", "Odyssey"]) : "");
+        const title = pick(prefixes) + " " + pick(nouns) + (Math.random() < 0.5 ? ": " + pick(["Reborn", "Awakening", "Legacy", "Nemesis", "Genesis", "Eclipse", "Odyssey"]) : "");
         const genre = pick(genres);
         const set = pick(settings);
         const mech = pick(mechanics);
