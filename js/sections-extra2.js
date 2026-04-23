@@ -317,18 +317,19 @@
       };
 
       const webglFP = () => {
+        const empty = { vendor: "—", renderer: "—", unmaskedVendor: "—", unmaskedRenderer: "—" };
         try {
           const c = document.createElement("canvas");
           const gl = c.getContext("webgl") || c.getContext("experimental-webgl");
-          if (!gl) return { vendor: "—", renderer: "—", unmaskedRenderer: "—" };
+          if (!gl) return empty;
           const dbg = gl.getExtension("WEBGL_debug_renderer_info");
           return {
             vendor: gl.getParameter(gl.VENDOR),
             renderer: gl.getParameter(gl.RENDERER),
-            unmaskedRenderer: dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "—",
             unmaskedVendor: dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : "—",
+            unmaskedRenderer: dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "—",
           };
-        } catch (e) { return { vendor: "—", renderer: "—", unmaskedRenderer: "—" }; }
+        } catch (e) { return empty; }
       };
 
       const audioFP = async () => {
